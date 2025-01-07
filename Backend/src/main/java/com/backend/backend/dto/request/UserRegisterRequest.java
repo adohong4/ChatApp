@@ -1,11 +1,7 @@
 package com.backend.backend.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +21,13 @@ public class UserRegisterRequest {
         return password;
     }
 
+    public String getProfilePic() {
+        return profilePic;
+    }
     String email;
     String fullName;
     String password;
+    String profilePic;
+
+
 }
