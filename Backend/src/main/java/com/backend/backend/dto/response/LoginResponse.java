@@ -1,21 +1,21 @@
 package com.backend.backend.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
+@AllArgsConstructor
 @Data
 public class LoginResponse {
     // Getters và Setters
-    private String token;
+    private String _id;
     private String email;
     private String fullName;
+    private String profilePic;
 
-    // Constructor có tham số
-    public LoginResponse(String token, String email, String fullName) {
-        this.token = token;
+    public LoginResponse(String _id, String email, String fullName, String profilePic) {
+        this._id = _id;
         this.email = email;
         this.fullName = fullName;
+        this.profilePic = profilePic;
     }
 
     public String getEmail() {
@@ -26,7 +26,11 @@ public class LoginResponse {
         return fullName;
     }
 
-    public String getToken() {
-        return token;
+    public String get_id() {
+        return _id;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
     }
 }

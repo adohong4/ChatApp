@@ -61,7 +61,7 @@ public class UserService {
         if (user != null) {
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 String token = jwtToken.generateToken(user, response);
-                return new LoginResponse(token, user.getEmail(), user.getFullName());
+                return new LoginResponse(user.get_id(),user.getEmail(), user.getFullName(), user.getProfilePic());
             } else {
                 throw new Exception("Tài khoản hoặc mật khẩu không chính xác");
             }
