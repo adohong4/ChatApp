@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class UserController {
     @Autowired
@@ -47,4 +49,10 @@ public class UserController {
         userService.logout(response);
         return ResponseEntity.ok().body("Dang xuat thanh cong");
     }
+
+    @PostMapping("/api/messages/users")
+    List<User> getUser(){
+        return userService.getUser();
+    }
+
 }
