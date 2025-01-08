@@ -1,7 +1,9 @@
 package com.backend.backend.service;
 
+import com.backend.backend.dto.response.LoginResponse;
 import com.backend.backend.config.JwtToken;
 import com.backend.backend.dto.request.UserRegisterRequest;
+import com.backend.backend.dto.request.LoginRequest;
 import com.backend.backend.model.User;
 import com.backend.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,4 +55,19 @@ public class UserService {
     public void logout(HttpServletResponse response){
         response.setHeader("Set-Cookie", "jwt=; HttpOnly; Max-Age=0; Path=/;");
     }
+
+    public LoginResponse login(LoginRequest loginRequest, HttpServletResponse response) throws Exception {
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+        if (user != null) {
+            if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                String token = jwtToken.generateToken(user, response);
+                return new LoginResponse(token, user.getEmail(), user.getFullName());
+            } else {
+                throw new Exception("Tài khoản hoặc mật khẩu không chính xác");
+            }
+        } else {
+            throw new Exception("Tài khoản không tồn tại");
+        }
+    }
+
 }
