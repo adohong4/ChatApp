@@ -1,7 +1,9 @@
 package com.backend.backend.service;
 
 import com.backend.backend.config.JwtToken;
+import com.backend.backend.dto.request.UserLoginRequest;
 import com.backend.backend.dto.request.UserRegisterRequest;
+import com.backend.backend.dto.response.UserResponse;
 import com.backend.backend.model.User;
 import com.backend.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,14 +15,16 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    private JwtToken jwtToken;
 
     @Autowired
-    private JwtToken jwtToken;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtToken jwtToken){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtToken = jwtToken;
+    }
 
     public User createUser(UserRegisterRequest request, HttpServletResponse response){
 
@@ -50,7 +54,31 @@ public class UserService {
         return savedUser;
     }
 
+    public User login(UserLoginRequest request, HttpServletResponse response) {
+        // Tìm người dùng theo email
+        User user = findByEmail(request.getEmail());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Kiểm tra mật khẩu
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        // Tạo token và gửi về
+        jwtToken.generateToken(user, response);
+
+        return user;
+    }
+
+
     public void logout(HttpServletResponse response){
         response.setHeader("Set-Cookie", "jwt=; HttpOnly; Max-Age=0; Path=/;");
+    }
+
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
     }
 }
