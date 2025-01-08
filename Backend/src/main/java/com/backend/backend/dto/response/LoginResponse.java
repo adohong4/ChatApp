@@ -2,7 +2,6 @@ package com.backend.backend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-@AllArgsConstructor
 @Data
 public class LoginResponse {
     // Getters và Setters
