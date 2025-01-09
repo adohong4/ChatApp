@@ -83,7 +83,13 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public User findById(String id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
+
     public List<User> getUser(){
         return userRepository.findAll();
     }
+
 }
