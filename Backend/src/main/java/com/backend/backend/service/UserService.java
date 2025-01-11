@@ -92,4 +92,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
 }

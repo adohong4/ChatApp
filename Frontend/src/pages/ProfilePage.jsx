@@ -10,19 +10,13 @@ const ProfilePage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-
-    reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
-    };
+    setSelectedImg(URL.createObjectURL(file)); // Hiển thị ảnh đã chọn trước khi upload
+    await updateProfile(file); // Gửi tệp trực tiếp
   };
 
+
   return (
-<div className="profile">
+    <div className="profile">
       <div className="profile__card">
         <div className="profile__title">
           <h1>Thông tin cá nhân</h1>
