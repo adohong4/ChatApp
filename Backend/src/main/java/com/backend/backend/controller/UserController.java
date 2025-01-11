@@ -19,8 +19,15 @@ import java.util.List;
 
 @RestController
 public class UserController {
+
+    private WebSocketEventListener webSocketEventListener;
+
     @Autowired
     private UserService userService;
+
+    public UserController(WebSocketEventListener webSocketEventListener) {
+        this.webSocketEventListener = webSocketEventListener;
+    }
 
     @PostMapping("/api/auth/register")
     User createUser(@RequestBody UserRegisterRequest request, HttpServletResponse response){
@@ -30,6 +37,11 @@ public class UserController {
     @PostMapping("/api/auth/login")
     public ResponseEntity<User> login(@RequestBody UserLoginRequest request, HttpServletResponse response){
         User user = userService.login(request, response);
+
+//        if (user != null) {
+//            webSocketEventListener.onUserLogin(user.get_id()); // Giả sử bạn có phương thức getId() trong User
+//        }
+
         return ResponseEntity.ok(user);
     }
 
@@ -45,7 +57,12 @@ public class UserController {
     }
 
     @PostMapping("/api/auth/logout")
-    public ResponseEntity<?> Logout(HttpServletResponse response){
+    public ResponseEntity<?> Logout(HttpServletRequest request, HttpServletResponse response){
+            User user = (User) request.getAttribute("user"); // Lấy thông tin người dùng từ request
+
+        if (user != null) {
+            webSocketEventListener.onUserLogout(user.get_id()); // Cập nhật trạng thái offline
+        }
         userService.logout(response);
         return ResponseEntity.ok().body("Dang xuat thanh cong");
     }

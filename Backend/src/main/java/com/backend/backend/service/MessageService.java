@@ -25,37 +25,14 @@ public class MessageService {
     private final Map<String, String> userSocketMap = new HashMap<>();
 
     public void saveMessage(Message message) {
-        messageRepository.save(message);
-    }
-
-    public void addUserSocket(String userId, String socketId) {
-        userSocketMap.put(userId, socketId);
-        messagingTemplate.convertAndSend("/topic/onlineUsers", userSocketMap.keySet());
-    }
-
-    public void removeUserSocket(String userId) {
-        userSocketMap.remove(userId);
-        messagingTemplate.convertAndSend("/topic/onlineUsers", userSocketMap.keySet());
-    }
-
-    public String getReceiverSocketId(String userId) {
-        return userSocketMap.get(userId);
+        messageRepository.save(message); // Lưu tin nhắn vào cơ sở dữ liệu
     }
 
     public void sendMessageToReceiver(String receiverId, Message message) {
-        String receiverSocketId = getReceiverSocketId(receiverId);
-        if (receiverSocketId != null) {
-            messagingTemplate.convertAndSendToUser(receiverSocketId, "/newMessage", message);
-        }
+        // Gửi tin nhắn đến người nhận qua WebSocket
+        messagingTemplate.convertAndSend("/topic/messages/" + receiverId, message);
     }
 
-    public void userConnected(String userId, String socketId) {
-        addUserSocket(userId, socketId);
-    }
-
-    public void userDisconnected(String userId) {
-        removeUserSocket(userId);
-    }
 
     public List<Message> getMessages(ObjectId myId, ObjectId userToChatId) {
         return messageRepository.findBySenderIdInAndReceiverIdIn(

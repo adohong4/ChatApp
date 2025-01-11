@@ -10,6 +10,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -20,7 +22,7 @@ import java.util.List;
 public class MessageController {
 
     @Autowired
-    private UserService userService;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private MessageService messageService;
@@ -42,6 +44,9 @@ public class MessageController {
             message.setCreatedAt(new Date());
 
             messageService.saveMessage(message);
+
+            // Gửi tin nhắn tới người nhận qua WebSocket
+            messagingTemplate.convertAndSend("/topic/messages/" + receiverId, message);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
         } catch (Exception e) {
