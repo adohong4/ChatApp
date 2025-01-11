@@ -228,16 +228,16 @@
   flex-direction: row-reverse;
 }
 .chat-message-end .chat-bubble{
-  background-color: #FFBF00 ;
-  color: #fff;
+  border: 2px solid #FFBF00;
+  color: #3f3f46;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 .chat-message-start {
   flex-direction: row;
 }
 .chat-message-start .chat-bubble{
   color: #18181b;
-  border: 2px solid #FFBF00;
-  background-color: #fff;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .chat-avatar {
@@ -267,10 +267,13 @@
 }
 
 .chat-time {
-  margin-left: 0.25rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
-
+.chat-message-end .chat-avatar{
+  margin-left: 10px;
+}
 .chat-bubble {
   background-color: #f1f5f9; 
   padding: 0.75rem;

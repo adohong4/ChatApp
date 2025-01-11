@@ -16,17 +16,20 @@ public class WebSocketEventListener {
         this.messagingTemplate = messagingTemplate;
     }
 
-    // Khi người dùng đăng nhập
     public void onUserLogin(String userId) {
         onlineUsers.add(userId);
         messagingTemplate.convertAndSend("/topic/online-status", new UserStatus(userId, "online"));
     }
 
-    // Khi người dùng đăng xuất
     public void onUserLogout(String userId) {
         onlineUsers.remove(userId);
         messagingTemplate.convertAndSend("/topic/online-status", new UserStatus(userId, "offline"));
     }
+
+//    // API để lấy danh sách tất cả người dùng online
+//    public Set<String> getOnlineUsers() {
+//        return onlineUsers;
+//    }
 
     // Lớp UserStatus để gửi thông tin trạng thái
     public static class UserStatus {

@@ -109,10 +109,10 @@ export const useAuthStore = create((set, get) => ({
     newStompClient.connect({}, () => {
       // console.log("WebSocket connected");
 
-      // stompClient.subscribe(`/topic/online-status`, (message) => {
-      //   const userStatus = JSON.parse(message.body);
-      //   get().updateOnlineUsers(userStatus);
-      // });
+      newStompClient.subscribe(`/topic/online-status`, (message) => {
+        const userStatus = JSON.parse(message.body);
+        get().updateOnlineUsers(userStatus);
+      });
 
       stompClient.subscribe(`/topic/messages/${userId}`, (message) => {
         const newMessage = JSON.parse(message.body);
@@ -139,21 +139,19 @@ export const useAuthStore = create((set, get) => ({
   },
 
   // Cập nhật danh sách người dùng online
-  // updateOnlineUsers: (userStatus) => {
-  //   set((state) => {
-  //     const { onlineUsers } = state;
-  //     if (userStatus.status === "online") {
-  //       // Thêm người dùng vào danh sách online
-  //       if (!onlineUsers.includes(userStatus.userId)) {
-  //         return { onlineUsers: [...onlineUsers, userStatus.userId] };
-  //       }
-  //     } else if (userStatus.status === "offline") {
-  //       // Xóa người dùng khỏi danh sách online
-  //       return { onlineUsers: onlineUsers.filter(id => id !== userStatus.userId) };
-  //     }
-  //     return state; // Không thay đổi gì nếu không có sự thay đổi trạng thái
-  //   });
-  // },
+  updateOnlineUsers: (userStatus) => {
+    set((state) => {
+      const { onlineUsers } = state;
+      if (userStatus.status === "online") {
+        if (!onlineUsers.includes(userStatus.userId)) {
+          return { onlineUsers: [...onlineUsers, userStatus.userId] };
+        }
+      } else if (userStatus.status === "offline") {
+        return { onlineUsers: onlineUsers.filter((id) => id !== userStatus.userId) };
+      }
+      return state; // Không thay đổi nếu không có trạng thái mới
+    });
+  },
 
   // Cập nhật người dùng đã đăng nhập
   setAuthUser: (user) => set({ authUser: user }),

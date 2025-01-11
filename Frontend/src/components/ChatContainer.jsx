@@ -67,12 +67,13 @@ const ChatContainer = () => {
                 />
               </div>
             </div>
-            <div className="chat-header">
+            {/* <div className="chat-header">
               <time className="chat-time">{formatMessageTime(message.createdAt)}</time>
-            </div>
+            </div> */}
             <div className="chat-bubble">
               {message.image && <img src={message.image} alt="Attachment" className="chat-image" />}
               {message.text && <p>{message.text}</p>}
+              <time className="chat-time">{formatMessageTime(message.createdAt)}</time>
             </div>
           </div>
         ))}

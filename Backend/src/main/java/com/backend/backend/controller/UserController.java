@@ -38,9 +38,9 @@ public class UserController {
     public ResponseEntity<User> login(@RequestBody UserLoginRequest request, HttpServletResponse response){
         User user = userService.login(request, response);
 
-//        if (user != null) {
-//            webSocketEventListener.onUserLogin(user.get_id()); // Giả sử bạn có phương thức getId() trong User
-//        }
+        if (user != null) {
+            webSocketEventListener.onUserLogin(user.get_id()); // Giả sử bạn có phương thức getId() trong User
+        }
 
         return ResponseEntity.ok(user);
     }
@@ -58,11 +58,12 @@ public class UserController {
 
     @PostMapping("/api/auth/logout")
     public ResponseEntity<?> Logout(HttpServletRequest request, HttpServletResponse response){
-            User user = (User) request.getAttribute("user"); // Lấy thông tin người dùng từ request
+        User user = (User) request.getAttribute("user");
 
         if (user != null) {
-            webSocketEventListener.onUserLogout(user.get_id()); // Cập nhật trạng thái offline
+            webSocketEventListener.onUserLogout(user.get_id());
         }
+
         userService.logout(response);
         return ResponseEntity.ok().body("Dang xuat thanh cong");
     }
