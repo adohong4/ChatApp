@@ -2,8 +2,8 @@ package com.backend.backend.service;
 
 import com.backend.backend.dto.response.LoginResponse;
 import com.backend.backend.config.JwtToken;
+import com.backend.backend.dto.request.UserLoginRequest;
 import com.backend.backend.dto.request.UserRegisterRequest;
-import com.backend.backend.dto.request.LoginRequest;
 import com.backend.backend.model.User;
 import com.backend.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,18 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    private JwtToken jwtToken;
 
     @Autowired
-    private JwtToken jwtToken;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtToken jwtToken){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtToken = jwtToken;
+    }
 
     public User createUser(UserRegisterRequest request, HttpServletResponse response){
 
@@ -52,22 +55,42 @@ public class UserService {
         return savedUser;
     }
 
+    public User login(UserLoginRequest request, HttpServletResponse response) {
+        // Tìm người dùng theo email
+        User user = findByEmail(request.getEmail());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Kiểm tra mật khẩu
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        // Tạo token và gửi về
+        jwtToken.generateToken(user, response);
+
+        return user;
+    }
+
+
     public void logout(HttpServletResponse response){
         response.setHeader("Set-Cookie", "jwt=; HttpOnly; Max-Age=0; Path=/;");
     }
 
-    public LoginResponse login(LoginRequest loginRequest, HttpServletResponse response) throws Exception {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
-        if (user != null) {
-            if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                String token = jwtToken.generateToken(user, response);
-                return new LoginResponse(user.get_id(),user.getEmail(), user.getFullName(), user.getProfilePic());
-            } else {
-                throw new Exception("Tài khoản hoặc mật khẩu không chính xác");
-            }
-        } else {
-            throw new Exception("Tài khoản không tồn tại");
-        }
+
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
+    }
+
+    public User findById(String id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
+
+    public List<User> getUser(){
+        return userRepository.findAll();
     }
 
 }
