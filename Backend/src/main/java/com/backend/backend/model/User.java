@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "user")
@@ -28,6 +29,10 @@ public class User {
 
     private String profilePic;
     private List<ObjectId> myReaction;
+
+    public User() {
+        this.myReaction = new ArrayList<>(); // Khởi tạo danh sách
+    }
 
     public List<ObjectId> getMyReaction() {
         return myReaction;

@@ -4,6 +4,7 @@ import com.backend.backend.config.CloudinaryConfig;
 import com.backend.backend.model.NewsFeed;
 import com.backend.backend.model.User;
 import com.backend.backend.repository.NewsFeedRepository;
+import com.backend.backend.repository.UserRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.bson.types.ObjectId;
@@ -20,14 +21,17 @@ import java.util.stream.Collectors;
 public class NewsService {
 
     private final NewsFeedRepository newsFeedRep;
+    private final UserRepository userRepository;
     private final UserService userService;
     private final Cloudinary cloudinary;
 
+
     @Autowired
-    public NewsService(NewsFeedRepository newsFeedRep, UserService userService, Cloudinary cloudinary) {
+    public NewsService(NewsFeedRepository newsFeedRep, UserRepository userRepository,  UserService userService, Cloudinary cloudinary) {
         this.newsFeedRep = newsFeedRep;
         this.userService = userService;
         this.cloudinary = cloudinary;
+        this.userRepository = userRepository;
     }
 
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
@@ -39,7 +43,6 @@ public class NewsService {
             throw new  IllegalArgumentException("Kích thước tệp không được vượt quá 2 MB.");
         }
 
-        // Upload ảnh lên Cloudinary nếu có
         if (newsPic != null && !newsPic.isEmpty()) {
             Map<String, Object> uploadResult = cloudinary.uploader().upload(newsPic.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             uploadedImageUrl = (String) uploadResult.get("secure_url");
@@ -49,7 +52,7 @@ public class NewsService {
         NewsFeed newsFeed = new NewsFeed();
         newsFeed.setCreatedId(new ObjectId(user.get_id()));
         newsFeed.setContent(content);
-        newsFeed.setNewsPic(uploadedImageUrl); // Đường dẫn ảnh từ Cloudinary
+        newsFeed.setNewsPic(uploadedImageUrl);
         newsFeed.setCreatedAt(new Date());
         newsFeed.setReaction(new ArrayList<>());
 
@@ -86,12 +89,11 @@ public class NewsService {
     }
 
     public List<Map<String, Object>> getPostsByUser(String userId, User currentUser) {
-        List<NewsFeed> newsFeeds = newsFeedRep.findAll();  // Lấy tất cả bài đăng
+        List<NewsFeed> newsFeeds = newsFeedRep.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
 
-        // Lọc ra các bài đăng của user
         newsFeeds.stream()
-                .filter(newsFeed -> newsFeed.getCreatedId().toString().equals(userId))  // Chỉ lấy bài đăng của user này
+                .filter(newsFeed -> newsFeed.getCreatedId().toString().equals(userId))
                 .forEach(newsFeed -> {
                     Map<String, Object> newsWithUserDetails = new HashMap<>();
                     boolean hasReacted = currentUser.getMyReaction() != null && currentUser.getMyReaction().contains(new ObjectId(newsFeed.get_id()));
@@ -108,4 +110,39 @@ public class NewsService {
 
         return result;
     }
+
+    public void toggleReaction(String userId, String newsFeedId) {
+        NewsFeed newsFeed = newsFeedRep.findById(newsFeedId)
+                .orElseThrow(() -> new RuntimeException("NewsFeed not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<ObjectId> reactions = newsFeed.getReaction();
+        List<ObjectId> myReactions = user.getMyReaction();
+
+        // Kiểm tra xem ID của user có trong danh sách reactions và myReactions không
+        int reactionIndex = reactions.indexOf(new ObjectId(user.get_id()));
+        int myReactionIndex = myReactions.indexOf(new ObjectId(newsFeedId));
+
+        System.out.println("reactionIndex: " + reactionIndex);
+        System.out.println("myReactionIndex: " + myReactionIndex);
+
+        if (reactionIndex >= 0 && myReactionIndex >= 0) {
+            reactions.remove(reactionIndex);
+            myReactions.remove(myReactionIndex);
+            System.out.println("Removed reaction");
+        } else {
+            reactions.add(new ObjectId(user.get_id()));
+            myReactions.add(new ObjectId(newsFeedId));
+            System.out.println("Added reaction");
+        }
+
+        newsFeed.setReaction(reactions);
+        user.setMyReaction(myReactions);
+        newsFeedRep.save(newsFeed);
+        userRepository.save(user);
+    }
+
+
 }

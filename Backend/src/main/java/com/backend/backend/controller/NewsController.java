@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,13 +28,11 @@ public class NewsController {
             HttpServletRequest request
     ) {
         try {
-            // Lấy thông tin người dùng từ middleware
             User user = (User) request.getAttribute("user");
             if (user == null) {
                 return ResponseEntity.status(401).body("Unauthorized - No user found");
             }
 
-            // Gọi NewsService để tạo bài viết
             NewsFeed newsFeed = newsService.createNews(user, content, newsPic);
             return ResponseEntity.ok(newsFeed);
         } catch (IOException e) {
@@ -62,7 +57,6 @@ public class NewsController {
 
     @PostMapping("/getByUser")
     public ResponseEntity<?> getPostsByUser(HttpServletRequest request) {
-        // Lấy thông tin user đã được middleware xác thực
         User user = (User) request.getAttribute("user");
 
         if (user == null) {
@@ -70,7 +64,6 @@ public class NewsController {
         }
 
         try {
-            // Gọi Service để lấy bài đăng của user
             List<Map<String, Object>> userPosts = newsService.getPostsByUser(user.get_id().toString(), user);
 
             return ResponseEntity.ok(userPosts);
@@ -79,4 +72,19 @@ public class NewsController {
         }
     }
 
+    @PostMapping("/toggle/{newsFeedId}")
+    public ResponseEntity<?> toggleReaction(@PathVariable String newsFeedId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        try {
+            newsService.toggleReaction(user.get_id(), newsFeedId);
+            return ResponseEntity.ok("Reaction toggled successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to toggle reaction: " + e.getMessage());
+        }
+    }
 }

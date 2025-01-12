@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +25,12 @@ public class NewsFeed {
 
     private String content;
     private String newsPic;
-
     private Date createdAt;
-
     private List<ObjectId> reaction;
+
+    public NewsFeed() {
+        this.reaction = new ArrayList<>(); // Khởi tạo danh sách
+    }
 
     public String get_id() {
         return _id;

@@ -2,9 +2,7 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.UserLoginRequest;
 import com.backend.backend.dto.request.UserRegisterRequest;
-import com.backend.backend.dto.response.UserResponse;
 import com.backend.backend.model.User;
-import com.backend.backend.repository.UserRepository;
 import com.backend.backend.service.UserService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -47,7 +45,7 @@ public class UserController {
         User user = userService.login(request, response);
 
         if (user != null) {
-            webSocketEventListener.onUserLogin(user.get_id()); // Giả sử bạn có phương thức getId() trong User
+            webSocketEventListener.onUserLogin(user.get_id());
         }
 
         return ResponseEntity.ok(user);
@@ -83,23 +81,19 @@ public class UserController {
 
     @PostMapping("/api/auth/update-profile")
     public ResponseEntity<?> updateProfilePic(@RequestParam("profilePic") MultipartFile file, HttpServletRequest request) {
-        // Kiểm tra kích thước tệp
         if (file.getSize() > MAX_FILE_SIZE) {
             return ResponseEntity.badRequest().body("Kích thước tệp không được vượt quá 2 MB.");
         }
 
-        // Lấy thông tin người dùng từ request attribute
         User user = (User) request.getAttribute("user");
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized - No user found");
         }
 
         try {
-            // Tải ảnh lên Cloudinary
             Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             String imageUrl = (String) uploadResult.get("secure_url");
 
-            // Cập nhật đường dẫn ảnh vào User
             user.setProfilePic(imageUrl);
             userService.updateUser(user);
 
