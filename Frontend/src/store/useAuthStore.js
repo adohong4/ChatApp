@@ -19,7 +19,7 @@ export const useAuthStore = create((set, get) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.post("/auth/check");
-      console.log("check Auth: ", res.data)
+      // console.log("check Auth: ", res.data)
       const updatedAuthUser = res.data._id;
 
       set({ authUser: res.data });
