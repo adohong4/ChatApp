@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,7 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setPassword(hashedPassword);
         user.setProfilePic("");
+        user.setCreateAt(new Date());
 
         User savedUser = userRepository.save(user);
 
@@ -83,8 +85,11 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public List<User> getUser(){
-        return userRepository.findAll();
+    public List<User> getUser(String userId){
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .filter(user -> !user.get_id().equals(userId))
+                .toList();
     }
 
     public User updateUser(User user) {

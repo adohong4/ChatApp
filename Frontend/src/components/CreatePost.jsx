@@ -67,7 +67,7 @@ const PostCreatorWithIcons = () => {
         <div className="post-input-container">
           <div className="post">
             <div className="profile-pic-1">
-              <img src={authUser.profilePic} alt="User" className="rounded-full" />
+              <img src={authUser.profilePic || "/avatar.png"} alt="User" className="rounded-full" />
             </div>
 
             <textarea
@@ -134,8 +134,8 @@ const PostCreatorWithIcons = () => {
       </form>
       {/* News Post */}
       <div className="post-list" >
-        {newsfeed.map((post) => (
-          <div key={post.id} className="post-item">
+        {newsfeed.map((post, index) => (
+          <div key={index} className="post-item">
             <div className="post-header">
               <div className="profile-pic">
                 <img

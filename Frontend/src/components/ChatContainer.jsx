@@ -46,38 +46,38 @@ const ChatContainer = () => {
   return (
     <div className="chat-container">
       <ChatHeader />
-
       <div className="chat-messages">
-        {messages.map((message) => (
-          <div
-            key={message._id}
-            className={`chat-message ${message.senderId === authUser._id ? "chat-message-end" : "chat-message-start"
-              }`}
-            ref={messageEndRef}
-          >
-            <div className="chat-avatar">
-              <div className="chat-avatar-img">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
+        {messages.length === 0 ? (
+          <p className="chat-begin">Hãy nhắn tin để cùng nhau bắt đầu cuộc trò chuyện thú vị nha.</p>
+        ) : (
+          <div className="chat">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`chat-message ${message.senderId === authUser._id ? "chat-message-end" : "chat-message-start"
+                  }`}
+                ref={messageEndRef}
+              >
+                <div className="chat-avatar">
+                  <div className="chat-avatar-img">
+                    <img
+                      src={
+                        message.senderId === authUser._id
+                          ? authUser.profilePic || "/avatar.png"
+                          : selectedUser.profilePic || "/avatar.png"
+                      }
+                      alt="profile pic"
+                    />
+                  </div>
+                </div>
+                <div className="chat-bubble">
+                  {message.image && <img src={message.image} alt="Attachment" className="chat-image" />}
+                  {message.text && <p>{message.text}</p>}
+                  <time className="chat-time">{formatMessageTime(message.createdAt)}</time>
+                </div>
               </div>
-            </div>
-            {/* <div className="chat-header">
-              <time className="chat-time">{formatMessageTime(message.createdAt)}</time>
-            </div> */}
-            <div className="chat-bubble">
-              {message.image && <img src={message.image} alt="Attachment" className="chat-image" />}
-              {message.text && <p>{message.text}</p>}
-              <time className="chat-time">{formatMessageTime(message.createdAt)}</time>
-            </div>
-          </div>
-        ))}
-      </div>
+            ))}
+          </div>)}</div>
 
       <MessageInput />
     </div>

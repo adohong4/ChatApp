@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User, Heart, MessageCircle, Share2 } from "lucide-react";
-import { FaImage, FaPaperPlane, FaHeart, FaCommentDots, FaShareAlt, FaNewspaper } from "react-icons/fa";
+import { FaUser, FaHeart, FaCommentDots, FaShareAlt, FaNewspaper } from "react-icons/fa";
 import { useNewsStore } from "../store/useNewsStore";
-import { formatTime } from "../lib/utils";
+import { formatTime, formatDayTime } from "../lib/utils";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
-  const [likes, setLikes] = useState({});
   const [comments, setComments] = useState({});
-  const [commentText, setCommentText] = useState("");
   const [isCommenting, setIsCommenting] = useState({}); // Trạng thái để kiểm tra mỗi bài đăng có đang mở phần bình luận hay không
   const { userNewsfeed, isUsersLoading, getUserNewsfeed, toggleReaction } = useNewsStore();
 
@@ -42,7 +40,7 @@ const ProfilePage = () => {
     <div className="profile">
       <div className="profile__card">
         <div className="profile__title">
-          <h1>Thông tin cá nhân</h1>
+          <h1> <FaUser size={15}/>THÔNG TIN CÁ NHÂN</h1>
           {/* <p>Thông tin cá nhân của bạn</p> */}
         </div>
         <div className="top__profile">
@@ -83,7 +81,7 @@ const ProfilePage = () => {
         <div className="profile__account">
           <div className="profile__account-row">
             <span>Thành viên từ</span>
-            <span>{authUser.createdAt?.split("T")[0]}</span>
+            <span>{formatDayTime(authUser.createAt)}</span>
           </div>
           <div className="profile__account-row">
             <span>Trạng thái tài khoản</span>
@@ -93,7 +91,7 @@ const ProfilePage = () => {
       </div>
 
       <div className="profile__posts">
-        <h2> <FaNewspaper size={25}/> BÀI ĐĂNG</h2>
+        <h2> <FaNewspaper size={25} /> BÀI ĐĂNG</h2>
         {userNewsfeed.length === 0 ? (
           <p>Chưa có bài đăng nào.</p>
         ) : (
@@ -133,7 +131,7 @@ const ProfilePage = () => {
                   <button onClick={() => handleToggleReaction(post._id)} className="like-button">
                     {post.hasReacted ? (
                       <>
-                        <FaHeart size={20} color="red" /> 
+                        <FaHeart size={20} color="red" />
                         <span style={{ color: "red" }}>Yêu Thích</span>
                       </>
                     ) : (

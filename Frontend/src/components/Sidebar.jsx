@@ -25,7 +25,7 @@ const Sidebar = () => {
       {/* Header */}
       <div className="sidebar-header">
         <div className="sidebar-header-content">
-          <Users className="icon-large" />
+          {/* <Users className="icon-large" /> */}
           <span className="sidebar-header-title">Liên hệ</span>
         </div>
         {/* Online Filter Toggle */}
@@ -37,7 +37,7 @@ const Sidebar = () => {
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
               className="checkbox"
             />
-            <span className="sidebar-filter-text">Người đang dùng hoạt động</span>
+            <span className="sidebar-filter-text">Liên hệ hoạt động <Users size={20} /></span>
           </label>
           {/* <span className="sidebar-online-count">{(onlineUsers.length - 1)} online</span> */}
         </div>
@@ -71,7 +71,7 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="sidebar-no-users">Không người dùng nào hoạt động</div>
+          <div className="sidebar-no-users">Không người dùng hoạt động</div>
         )}
       </div>
     </aside>

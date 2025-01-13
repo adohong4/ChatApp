@@ -57,7 +57,7 @@ const SignUpPage = () => {
                 <input
                   type="text"
                   className="input"
-                  placeholder="Nguyen Viet Anh"
+                  placeholder="Ví dụ: Nguyen Van A"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 />

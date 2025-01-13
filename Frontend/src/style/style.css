@@ -37,13 +37,13 @@
   
   .label {
     margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
   }
   
   .input-field {
     width: 100%;
     padding: 0.75rem 1rem;
-    padding-left: 2.5rem;
+    padding-left: 3rem;
     border: 1px solid #ccc;
     border-radius: 50px;
     font-size: 1rem;
@@ -241,8 +241,12 @@ body {
 }
 
 .profile__title h1 {
-  font-size: 24px;
+  font-size: 17px;
   margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .profile__title p {
@@ -316,7 +320,7 @@ body {
   justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid #eaeaea;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .profile__account-row span {
@@ -338,7 +342,8 @@ body {
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
-  gap: 10px;
+  align-items: center;
+  gap: 5px;
 }
 
 .posts__list {
@@ -392,7 +397,9 @@ body {
 }
 
 .post__content .pContent{
-  font-size: 18px;
+  margin-top: 10px;
+  font-size: 16px;
+  margin-left: 8px ;
 }
 
 .post__content .react{
@@ -406,7 +413,7 @@ body {
   align-items: center;
   gap: 5px;
   justify-content: space-between;
-  font-size: 20px;
+  font-size: 16px;
   padding: 0 20px;
 }
 
