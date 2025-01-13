@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User, Heart, MessageCircle, Share2 } from "lucide-react";
+import { FaImage, FaPaperPlane, FaHeart, FaCommentDots, FaShareAlt, FaNewspaper } from "react-icons/fa";
 import { useNewsStore } from "../store/useNewsStore";
 import { formatTime } from "../lib/utils";
 
@@ -11,7 +12,7 @@ const ProfilePage = () => {
   const [comments, setComments] = useState({});
   const [commentText, setCommentText] = useState("");
   const [isCommenting, setIsCommenting] = useState({}); // Trạng thái để kiểm tra mỗi bài đăng có đang mở phần bình luận hay không
-  const { userNewsfeed, isUsersLoading, getUserNewsfeed } = useNewsStore();
+  const { userNewsfeed, isUsersLoading, getUserNewsfeed, toggleReaction } = useNewsStore();
 
   useEffect(() => {
     getUserNewsfeed();
@@ -19,33 +20,10 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!isUsersLoading) {
-      setLikes(userNewsfeed.reduce((acc, post) => ({ ...acc, [post.id]: post.likes }), {}));
       setComments(userNewsfeed.reduce((acc, post) => ({ ...acc, [post.id]: post.comments }), {}));
       setIsCommenting(userNewsfeed.reduce((acc, post) => ({ ...acc, [post.id]: false }), {}));
     }
   }, [userNewsfeed, isUsersLoading]);
-
-  const handleLike = (postId) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [postId]: prevLikes[postId] + 1,
-    }));
-  };
-
-  const handleAddComment = (postId) => {
-    if (!commentText.trim()) return;
-
-    const newComment = {
-      userName: authUser.fullName, // Thêm tên người bình luận
-      text: commentText,
-    };
-
-    setComments((prevComments) => ({
-      ...prevComments,
-      [postId]: [...prevComments[postId], newComment],
-    }));
-    setCommentText("");
-  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -55,11 +33,9 @@ const ProfilePage = () => {
     await updateProfile(file);
   };
 
-  const handleToggleCommentSection = (postId) => {
-    setIsCommenting((prevState) => ({
-      ...prevState,
-      [postId]: !prevState[postId], // Chuyển đổi trạng thái hiển thị bình luận của bài đăng
-    }));
+  const handleToggleReaction = async (newsFeedId) => {
+    await toggleReaction(newsFeedId);
+    getUserNewsfeed();
   };
 
   return (
@@ -117,7 +93,7 @@ const ProfilePage = () => {
       </div>
 
       <div className="profile__posts">
-        <h2>Bài đăng của bạn</h2>
+        <h2> <FaNewspaper size={25}/> BÀI ĐĂNG</h2>
         {userNewsfeed.length === 0 ? (
           <p>Chưa có bài đăng nào.</p>
         ) : (
@@ -139,7 +115,7 @@ const ProfilePage = () => {
 
 
                 <div className="post__content">
-                  <p>{post.content}</p>
+                  <p className="pContent">{post.content}</p>
                   {post.newsPic && (
                     <div className="post__image-wrapper">
                       <img
@@ -149,43 +125,30 @@ const ProfilePage = () => {
                       />
                     </div>
                   )}
+                  <p className="react">{post.reaction} lượt thích</p>
                 </div>
 
 
                 <div className="post__actions">
-                  <button onClick={() => handleLike(post.id)} className="like-button">
-                    <Heart size={20} color={likes[post.id] > 0 ? "red" : "gray"} />{" "}
-                    {post.reaction}{likes[post.id]} Thích
+                  <button onClick={() => handleToggleReaction(post._id)} className="like-button">
+                    {post.hasReacted ? (
+                      <>
+                        <FaHeart size={20} color="red" /> 
+                        <span style={{ color: "red" }}>Yêu Thích</span>
+                      </>
+                    ) : (
+                      <>
+                        <Heart size={20} color="gray" /> Yêu Thích
+                      </>
+                    )}
                   </button>
-                  <button
-                    className="comment-button"
-                    onClick={() => handleToggleCommentSection(post.id)}
-                  >
-                    Bình luận
+                  <button className="comment-button">
+                    <FaCommentDots size={20} />Bình luận
                   </button>
-                  <button className="share-button">Chia sẻ</button>
+                  <button className="share-button">
+                    <FaShareAlt size={20} />Chia sẻ
+                  </button>
                 </div>
-                {isCommenting[post.id] && (
-                  <div className="comments-section">
-                    <div className="comments-list">
-                      {comments[post.id]?.map((comment, index) => (
-                        <div key={index} className="comment-item">
-                          <p><strong>{comment.userName}:</strong> {comment.text}</p> {/* Hiển thị tên người bình luận */}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="comment-input">
-                      <input
-                        type="text"
-                        placeholder="Nhập bình luận..."
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                      />
-                      <button onClick={() => handleAddComment(post.id)}>Gửi</button>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>

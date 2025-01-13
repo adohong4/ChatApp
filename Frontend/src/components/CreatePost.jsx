@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FaImage, FaPaperPlane, FaHeart, FaCommentDots, FaShareAlt } from "react-icons/fa";
+import { Camera, Mail, User, Heart, MessageCircle, Share2 } from "lucide-react";
 import { useNewsStore } from "../store/useNewsStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatTime } from "../lib/utils";
 import toast from "react-hot-toast";
 
 const PostCreatorWithIcons = () => {
-  const [postText, setPostText] = useState("");
   const [image, setImage] = useState(null);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const emojis = ["😀", "😂", "😍", "🔥", "👍", "💡", "🎉", "🌟", "❤️", "😊"];
-  const { newsfeed, isNewsfeedLoading, getAllNewsfeed } = useNewsStore();
+  const { newsfeed, isNewsfeedLoading, getAllNewsfeed, toggleReaction } = useNewsStore();
   const { authUser } = useAuthStore();
   const createNewsfeed = useNewsStore((state) => state.createNewsfeed);
   const [content, setContent] = useState("");
@@ -27,7 +27,7 @@ const PostCreatorWithIcons = () => {
       } else {
         setNewsPic(file);
       }
-    } 
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -48,6 +48,11 @@ const PostCreatorWithIcons = () => {
     }
   };
 
+  const handleToggleReaction = async (newsFeedId) => {
+    await toggleReaction(newsFeedId);
+    getAllNewsfeed();
+  };
+
   useEffect(() => {
     getAllNewsfeed();
   }, [getAllNewsfeed]);
@@ -57,7 +62,7 @@ const PostCreatorWithIcons = () => {
   };
 
   return (
-    <div className="post-creator-container">
+    <div className="post-creator-container" style={{ maxHeight: '800px', overflowY: 'scroll' }}>
       <form onSubmit={handleSubmit}>
         <div className="post-input-container">
           <div className="post">
@@ -126,7 +131,7 @@ const PostCreatorWithIcons = () => {
         </div>
       </form>
       {/* News Post */}
-      <div className="post-list" style={{ maxHeight: '600px', overflowY: 'scroll' }}>
+      <div className="post-list" >
         {newsfeed.map((post) => (
           <div key={post.id} className="post-item">
             <div className="post-header">
@@ -143,26 +148,32 @@ const PostCreatorWithIcons = () => {
               </div>
             </div>
             <div className="post-content">
-              <p>{post.content}</p>
+              <p className="pContent">{post.content}</p>
               {post.newsPic && <img src={post.newsPic} alt="Post" />}
-              <p>{post.reaction} lượt thích</p>
+              <p className="react">{post.reaction} lượt thích</p>
             </div>
             <div className="post-actions">
-              <button
-                className="like-button"
-                aria-label="Like or Unlike"
-              >
-                <FaHeart size={20} color={post.liked ? "red" : "gray"} />
+              <button onClick={() => handleToggleReaction(post._id)} className="like-button">
+                {post.hasReacted ? (
+                  <>
+                    <FaHeart size={20} color="red" />
+                    <span style={{ color: "red" }}>Yêu Thích</span>
+                  </>
+                ) : (
+                  <>
+                    <Heart size={20} color="gray" /> Yêu Thích
+                  </>
+                )}
               </button>
-              <span>{post.likes} likes</span>
+
               <button className="comment-button">
                 <FaCommentDots size={20} /> Bình luận
               </button>
+
               <button className="share-button">
                 <FaShareAlt size={20} /> Chia sẻ
               </button>
             </div>
-
           </div>
         ))}
       </div>

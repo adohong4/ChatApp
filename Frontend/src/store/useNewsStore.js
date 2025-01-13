@@ -47,15 +47,10 @@ export const useNewsStore = create((set, get) => ({
             formData.append("content", content);
             formData.append("newspic", newsPic);
 
-
-            console.log("Form Data:", [...formData]);
-
-            // Gửi yêu cầu POST
             const res = await axiosInstance.post("/newsfeed/create", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            // Cập nhật state
             set((state) => ({
                 newsfeed: [res.data, ...state.newsfeed],
             }));
@@ -67,6 +62,15 @@ export const useNewsStore = create((set, get) => ({
             );
         } finally {
             set({ isNewsfeedLoading: false });
+        }
+    },
+
+    toggleReaction: async (newsFeedId) => {
+        try {
+            await axiosInstance.post(`/newsfeed/toggle/${newsFeedId}`);
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trạng thái phản hồi:", error);
+            toast.error("Đã xảy ra lỗi khi cập nhật trạng thái phản hồi.");
         }
     },
 
