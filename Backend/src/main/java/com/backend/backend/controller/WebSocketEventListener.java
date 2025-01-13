@@ -16,6 +16,10 @@ public class WebSocketEventListener {
         this.messagingTemplate = messagingTemplate;
     }
 
+    public void notify(String userId){
+
+    }
+
     public void onUserLogin(String userId) {
         onlineUsers.add(userId);
         messagingTemplate.convertAndSend("/topic/online-status", new UserStatus(userId, "online"));

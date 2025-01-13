@@ -53,15 +53,50 @@ export const useChatStore = create((set, get) => ({
   },
 
   // Lắng nghe tin nhắn từ WebSocket
-  subscribeToMessages: (newMessage) => {
-    const { selectedUser } = get();
-
-    if (!newMessage || typeof newMessage !== "object") {
+  subscribeToMessages: (message) => {
+    const { users, selectedUser, messages } = get();
+  
+    let newMessage;
+    try {
+      if (typeof message === "string") {
+        newMessage = JSON.parse(message); // Parse nếu dữ liệu là string
+      } else {
+        newMessage = message; // Dữ liệu đã là object
+      }
+    } catch (error) {
+      console.error("Lỗi parse tin nhắn:", error, message);
+      return;
+    }
+  
+    // Kiểm tra newMessage hợp lệ
+    if (!newMessage || !newMessage.senderId || !newMessage.receiverId) {
       console.error("Dữ liệu tin nhắn không hợp lệ:", newMessage);
       return;
     }
-    toast.success("Bạn có tin nhắn mới từ ");
-    // Kiểm tra tin nhắn có thuộc về người dùng được chọn hay không
+  
+    const { senderId } = newMessage;
+  
+    console.log("Danh sách users hiện tại:", users);
+    console.log("Sender ID:", senderId);
+  
+    // Kiểm tra nếu senderId có trong danh sách users
+    const senderExists = users.some((user) => user._id === senderId);
+  
+    if (!senderExists) {
+      console.warn(`Sender ID ${senderId} không có trong danh sách users.`);
+      return;
+    }
+  
+    // Đưa senderId lên đầu danh sách users
+    const updatedUsers = [
+      ...users.filter((user) => user._id === senderId), // Lấy user có senderId
+      ...users.filter((user) => user._id !== senderId), // Giữ các user khác
+    ];
+  
+    set({ users: updatedUsers }); // Cập nhật lại danh sách users
+    toast.success("Bạn có tin nhắn mới!");
+  
+    // Kiểm tra tin nhắn có thuộc về người dùng đang trò chuyện hay không
     if (
       selectedUser &&
       (newMessage.senderId === selectedUser._id || newMessage.receiverId === selectedUser._id)
@@ -69,7 +104,6 @@ export const useChatStore = create((set, get) => ({
       set((state) => ({
         messages: [...state.messages, newMessage],
       }));
-
     } else {
       console.log("Tin nhắn không thuộc về người dùng đang trò chuyện, bỏ qua.");
     }

@@ -82,6 +82,7 @@ public class NewsController {
 
         try {
             newsService.toggleReaction(user.get_id(), newsFeedId);
+            
             return ResponseEntity.ok("Reaction toggled successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to toggle reaction: " + e.getMessage());
