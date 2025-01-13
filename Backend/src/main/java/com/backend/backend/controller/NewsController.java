@@ -4,6 +4,7 @@ import com.backend.backend.model.NewsFeed;
 import com.backend.backend.model.User;
 import com.backend.backend.service.NewsService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/newsfeed")
 public class NewsController {
+    private WebSocketEventListener webSocketEventListener;
 
     @Autowired
     private NewsService newsService;
+
+    public NewsController(WebSocketEventListener webSocketEventListener) {
+        this.webSocketEventListener = webSocketEventListener;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<?> createNews(
@@ -81,8 +87,11 @@ public class NewsController {
         }
 
         try {
-            newsService.toggleReaction(user.get_id(), newsFeedId);
-            
+            ObjectId targetUserId = newsService.toggleReaction(user.get_id(), newsFeedId);
+            // Notify target user if they are online
+            webSocketEventListener.notify(String.valueOf(targetUserId),
+                    user.getFullName() + " đã thích bài viết của bạn.");
+
             return ResponseEntity.ok("Reaction toggled successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to toggle reaction: " + e.getMessage());

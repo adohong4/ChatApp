@@ -123,9 +123,14 @@ export const useAuthStore = create((set, get) => ({
         get().updateOnlineUsers(userStatus);
       });
 
+      newStompClient.subscribe(`/topic/notify/${userId}`, (message) => {
+        const notification = JSON.parse(message.body);
+        toast.success(notification.message); 
+    });
+
       stompClient.subscribe(`/topic/messages/${userId}`, (message) => {
         const newMessage = JSON.parse(message.body);
-        useChatStore.getState().subscribeToMessages(newMessage); // Gọi phương thức cập nhật tin nhắn
+        useChatStore.getState().subscribeToMessages(newMessage); 
       });
     }, (error) => {
       console.error("WebSocket error:", error);
