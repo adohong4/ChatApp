@@ -226,17 +226,18 @@ body {
 
 .profile {
   max-width: 650px;
-  margin: 20px auto;
+  margin: 80px auto;
   padding: 20px;
-  background: #fff;
+  /* background: #fff; */
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 
 .profile__card {
   padding: 20px;
   border-bottom: 1px solid #eaeaea;
+  padding-top: 0 !important;
 }
 
 .profile__title h1 {
@@ -273,8 +274,8 @@ body {
 
 .profile__avatar-upload {
   position: absolute;
-  bottom: -10px;
-  right: -10px;
+  bottom: -5px;
+  right: 5px;
   background: #aaa;
   color: #fff;
   padding: 5px;

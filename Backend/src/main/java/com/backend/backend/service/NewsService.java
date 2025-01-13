@@ -112,7 +112,7 @@ public class NewsService {
         return result;
     }
 
-    public void toggleReaction(String userId, String newsFeedId) {
+    public ObjectId toggleReaction(String userId, String newsFeedId) {
         NewsFeed newsFeed = newsFeedRep.findById(newsFeedId)
                 .orElseThrow(() -> new RuntimeException("NewsFeed not found"));
 
@@ -143,6 +143,8 @@ public class NewsService {
         user.setMyReaction(myReactions);
         newsFeedRep.save(newsFeed);
         userRepository.save(user);
+
+        return newsFeed.getCreatedId();
     }
 
 

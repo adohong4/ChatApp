@@ -1,9 +1,13 @@
 package com.backend.backend.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,6 +18,15 @@ public class WebSocketEventListener {
 
     public WebSocketEventListener(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+    }
+
+    public void notify(String userId, String message) throws JsonProcessingException {
+        Map<String, String> payload = new HashMap<>();
+        payload.put("message", message);
+
+        String jsonMessage = new ObjectMapper().writeValueAsString(payload);
+
+        messagingTemplate.convertAndSend("/topic/notify/" + userId, jsonMessage);
     }
 
     public void onUserLogin(String userId) {

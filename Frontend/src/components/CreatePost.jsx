@@ -66,7 +66,7 @@ const PostCreatorWithIcons = () => {
       <form onSubmit={handleSubmit}>
         <div className="post-input-container">
           <div className="post">
-            <div className="profile-pic">
+            <div className="profile-pic-1">
               <img src={authUser.profilePic} alt="User" className="rounded-full" />
             </div>
 
@@ -77,14 +77,32 @@ const PostCreatorWithIcons = () => {
               onChange={(e) => setContent(e.target.value)}
             />
 
-            <div className="controls">
+
+            <p>{isNewsfeedLoading ? "Đang tải bài viết..." : ""}</p>
+          </div>
+          <div className="last-input">
+            <div className="image-upload-container">
+              <div className="image-upload">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="imageUpload"
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                />
+                <label htmlFor="imageUpload" className="upload-button">
+                  <FaImage size={24} /> Hình ảnh
+                </label>
+              </div>
+              
+            </div>
               <div className="emoji-picker-container">
                 <button
                   type="button"
                   className="emoji-picker-button"
                   onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
                 >
-                  😊
+                  😊 Biểu tượng/ Cảm Xúc
                 </button>
                 {emojiPickerVisible && (
                   <div className="emoji-picker">
@@ -102,32 +120,16 @@ const PostCreatorWithIcons = () => {
                 )}
               </div>
               <button type="submit" className="post-submit-button">
-                <FaPaperPlane size={24} />
+                <FaPaperPlane size={24} /> Đăng Trạng thái
               </button>
-            </div>
-            <p>{isNewsfeedLoading ? "Đang tải bài viết..." : ""}</p>
+              
           </div>
-
-          <div className="image-upload-container">
-            <div className="image-upload">
-              <input
-                type="file"
-                accept="image/*"
-                id="imageUpload"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
-              <label htmlFor="imageUpload" className="upload-button">
-                <FaImage size={24} />
-              </label>
-            </div>
-            {image && (
-              <div className="image-preview">
-                <img src={image} alt="Preview" />
-                <button onClick={() => setImage(null)}>Xóa</button>
-              </div>
-            )}
-          </div>
+          {image && (
+                <div className="image-preview">
+                  <img src={image} alt="Preview" />
+                  <button onClick={() => setImage(null)}>X</button>
+                </div>
+              )}
         </div>
       </form>
       {/* News Post */}
