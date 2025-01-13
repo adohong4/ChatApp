@@ -37,9 +37,9 @@ const Sidebar = () => {
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
               className="checkbox"
             />
-            <span className="sidebar-filter-text">Người dùng đang hoạt động</span>
+            <span className="sidebar-filter-text">Người đang dùng hoạt động</span>
           </label>
-          <span className="sidebar-online-count">{onlineUsers.length - 1} online</span>
+          {/* <span className="sidebar-online-count">{(onlineUsers.length - 1)} online</span> */}
         </div>
       </div>
 

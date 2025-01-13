@@ -29,12 +29,10 @@ public class UserService {
 
     public User createUser(UserRegisterRequest request, HttpServletResponse response){
 
-        // Kiểm tra độ dài mật khẩu
         if (request.getPassword().length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters");
         }
 
-        // Kiểm tra xem email đã tồn tại chưa
         Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("Email already exists");
@@ -56,18 +54,15 @@ public class UserService {
     }
 
     public User login(UserLoginRequest request, HttpServletResponse response) {
-        // Tìm người dùng theo email
         User user = findByEmail(request.getEmail());
         if (user == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        // Kiểm tra mật khẩu
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        // Tạo token và gửi về
         jwtToken.generateToken(user, response);
 
         return user;
@@ -91,6 +86,14 @@ public class UserService {
 
     public List<User> getUser(){
         return userRepository.findAll();
+    }
+
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id).orElse(null);
     }
 
 }

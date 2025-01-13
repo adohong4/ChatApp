@@ -3,8 +3,13 @@ package com.backend.backend.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "user")
 public class User {
@@ -23,6 +28,19 @@ public class User {
     private String password;
 
     private String profilePic;
+    private List<ObjectId> myReaction;
+
+    public User() {
+        this.myReaction = new ArrayList<>(); // Khởi tạo danh sách
+    }
+
+    public List<ObjectId> getMyReaction() {
+        return myReaction;
+    }
+
+    public void setMyReaction(List<ObjectId> myReaction) {
+        this.myReaction = myReaction;
+    }
 
     public String get_id() {
         return _id;

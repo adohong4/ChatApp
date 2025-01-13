@@ -2,19 +2,21 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.UserLoginRequest;
 import com.backend.backend.dto.request.UserRegisterRequest;
-import com.backend.backend.dto.response.UserResponse;
 import com.backend.backend.model.User;
 import com.backend.backend.service.UserService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -25,9 +27,14 @@ public class UserController {
     private UserService userService;
 
 
+    @Autowired
+    private Cloudinary cloudinary;
+
     public UserController(WebSocketEventListener webSocketEventListener) {
         this.webSocketEventListener = webSocketEventListener;
     }
+
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 
     @PostMapping("/api/auth/register")
 
@@ -40,7 +47,7 @@ public class UserController {
         User user = userService.login(request, response);
 
         if (user != null) {
-            webSocketEventListener.onUserLogin(user.get_id()); // Giả sử bạn có phương thức getId() trong User
+            webSocketEventListener.onUserLogin(user.get_id());
         }
 
         return ResponseEntity.ok(user);
@@ -75,4 +82,27 @@ public class UserController {
         return userService.getUser();
     }
 
+    @PostMapping("/api/auth/update-profile")
+    public ResponseEntity<?> updateProfilePic(@RequestParam("profilePic") MultipartFile file, HttpServletRequest request) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            return ResponseEntity.badRequest().body("Kích thước tệp không được vượt quá 2 MB.");
+        }
+
+        User user = (User) request.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized - No user found");
+        }
+
+        try {
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            String imageUrl = (String) uploadResult.get("secure_url");
+
+            user.setProfilePic(imageUrl);
+            userService.updateUser(user);
+
+            return ResponseEntity.ok(user);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra khi tải ảnh lên.");
+        }
+    }
 }

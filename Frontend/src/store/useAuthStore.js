@@ -19,7 +19,7 @@ export const useAuthStore = create((set, get) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.post("/auth/check");
-      console.log("check Auth: ", res.data)
+      // console.log("check Auth: ", res.data)
       const updatedAuthUser = res.data._id;
 
       set({ authUser: res.data });
@@ -38,7 +38,7 @@ export const useAuthStore = create((set, get) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await axiosInstance.post("/auth/signup", data);
+      const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data });
       toast.success("Đăng ký thành công");
       get().connectSocket(res.data._id);
@@ -79,19 +79,28 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  updateProfile: async (data) => {
+  updateProfile: async (file) => {
     set({ isUpdatingProfile: true });
     try {
-      const res = await axiosInstance.put("/auth/update-profile", data);
+      const formData = new FormData();
+      formData.append("profilePic", file);
+
+      console.log("Form Data:", [...formData]);
+
+      const res = await axiosInstance.post("/auth/update-profile", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       set({ authUser: res.data });
-      toast.success("Profile updated successfully");
+      toast.success("Cập nhật ảnh đại diện thành công");
     } catch (error) {
-      console.log("error in update profile:", error);
-      toast.error(error.response.data.message);
+      console.error("Lỗi trong update profile:", error);
+      toast.error(error.response?.data || "Cập nhật thất bại");
     } finally {
       set({ isUpdatingProfile: false });
     }
   },
+
 
   // Cấu hình WebSocket và kết nối
   connectSocket: (userId) => {
@@ -109,7 +118,7 @@ export const useAuthStore = create((set, get) => ({
     newStompClient.connect({}, () => {
       // console.log("WebSocket connected");
 
-      newStompClient.subscribe(`/topic/online-status`, (message) => {
+      stompClient.subscribe(`/topic/online-status`, (message) => {
         const userStatus = JSON.parse(message.body);
         get().updateOnlineUsers(userStatus);
       });
@@ -143,13 +152,15 @@ export const useAuthStore = create((set, get) => ({
     set((state) => {
       const { onlineUsers } = state;
       if (userStatus.status === "online") {
+        // Thêm người dùng vào danh sách online
         if (!onlineUsers.includes(userStatus.userId)) {
           return { onlineUsers: [...onlineUsers, userStatus.userId] };
         }
       } else if (userStatus.status === "offline") {
-        return { onlineUsers: onlineUsers.filter((id) => id !== userStatus.userId) };
+        // Xóa người dùng khỏi danh sách online
+        return { onlineUsers: onlineUsers.filter(id => id !== userStatus.userId) };
       }
-      return state; // Không thay đổi nếu không có trạng thái mới
+      return state; // Không thay đổi gì nếu không có sự thay đổi trạng thái
     });
   },
 
