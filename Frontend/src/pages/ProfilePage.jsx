@@ -67,7 +67,7 @@ const ProfilePage = () => {
       <div className="profile__card">
         <div className="profile__title">
           <h1>Thông tin cá nhân</h1>
-          <p>Thông tin cá nhân của bạn</p>
+          {/* <p>Thông tin cá nhân của bạn</p> */}
         </div>
         <div className="top__profile">
           <div className="profile__avatar">
@@ -142,7 +142,6 @@ const ProfilePage = () => {
                   <p>{post.content}</p>
                   {post.newsPic && (
                     <div className="post__image-wrapper">
-                      {/* <img src={post.newsPic} alt="Post" className="post__image" /> */}
                       <img
                         src={post.newsPic || "/avatar.png"}
                         alt="Avatar"

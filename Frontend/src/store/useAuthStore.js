@@ -38,7 +38,7 @@ export const useAuthStore = create((set, get) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await axiosInstance.post("/auth/signup", data);
+      const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data });
       toast.success("Đăng ký thành công");
       get().connectSocket(res.data._id);
@@ -84,6 +84,8 @@ export const useAuthStore = create((set, get) => ({
     try {
       const formData = new FormData();
       formData.append("profilePic", file);
+
+      console.log("Form Data:", [...formData]);
 
       const res = await axiosInstance.post("/auth/update-profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },

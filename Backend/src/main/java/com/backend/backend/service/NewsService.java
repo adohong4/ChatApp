@@ -1,6 +1,5 @@
 package com.backend.backend.service;
 
-import com.backend.backend.config.CloudinaryConfig;
 import com.backend.backend.model.NewsFeed;
 import com.backend.backend.model.User;
 import com.backend.backend.repository.NewsFeedRepository;
@@ -9,7 +8,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,11 +37,11 @@ public class NewsService {
     public NewsFeed createNews(User user, String content, MultipartFile newsPic) throws IOException {
         String uploadedImageUrl = null;
 
-        if (newsPic.getSize() > MAX_FILE_SIZE) {
-            throw new  IllegalArgumentException("Kích thước tệp không được vượt quá 2 MB.");
-        }
-
         if (newsPic != null && !newsPic.isEmpty()) {
+            if (newsPic.getSize() > MAX_FILE_SIZE) {
+                throw new  IllegalArgumentException("Kích thước tệp không được vượt quá 2 MB.");
+            }
+
             Map<String, Object> uploadResult = cloudinary.uploader().upload(newsPic.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             uploadedImageUrl = (String) uploadResult.get("secure_url");
         }
@@ -63,7 +61,9 @@ public class NewsService {
         List<NewsFeed> newsFeeds = newsFeedRep.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
 
-        return newsFeeds.stream().map(newsFeed -> {
+        return newsFeeds.stream()
+                .sorted(Comparator.comparing(NewsFeed::getCreatedAt).reversed()) //sortTime
+                .map(newsFeed -> {
 
             User user = userService.findById(newsFeed.getCreatedId().toString());
             if (user == null) {
@@ -93,6 +93,7 @@ public class NewsService {
         List<Map<String, Object>> result = new ArrayList<>();
 
         newsFeeds.stream()
+                .sorted(Comparator.comparing(NewsFeed::getCreatedAt).reversed()) //sortTime
                 .filter(newsFeed -> newsFeed.getCreatedId().toString().equals(userId))
                 .forEach(newsFeed -> {
                     Map<String, Object> newsWithUserDetails = new HashMap<>();
