@@ -72,14 +72,15 @@ const MessageInput = () => {
 
       <form onSubmit={handleSendMessage} className="message-form">
         <div className="message-input-wrapper">
-          <input
-            type="text"
-            className="message-input"
-            placeholder="Type a message..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <div className="emoji-picker-container">
+          <button
+            type="button"
+            className={`file-upload-button ${imagePreview ? "file-upload-active" : ""
+              }`}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Image size={20} />
+          </button>
+          <div className="emoji-picker-container emoji-picker-1">
             <button
               type="button"
               className="emoji-picker-button"
@@ -88,7 +89,7 @@ const MessageInput = () => {
               😊
             </button>
             {emojiPickerVisible && (
-              <div className="emoji-picker">
+              <div className="emoji-picker-input">
                 {emojis.map((emoji, index) => (
                   <button
                     key={index}
@@ -110,14 +111,15 @@ const MessageInput = () => {
             onChange={handleImageChange}
           />
 
-          <button
-            type="button"
-            className={`file-upload-button ${imagePreview ? "file-upload-active" : ""
-              }`}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Image size={20} />
-          </button>
+          
+          <input
+            type="text"
+            className="message-input"
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+
         </div>
         <button
           type="submit"

@@ -705,6 +705,19 @@
 .emoji-picker-container {
   position: relative;
 }
+.emoji-picker-input {
+  position: absolute;
+  top: 100%;
+  left: 18px;
+  top: -250px;
+  display: grid;
+  grid-template-columns: repeat(15, 32px);
+  gap: 4px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+}
 
 .emoji-picker {
   position: absolute;
