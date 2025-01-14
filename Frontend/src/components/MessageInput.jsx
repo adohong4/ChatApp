@@ -2,12 +2,14 @@ import { useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { emojis } from "../constants/index"
 
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -47,6 +49,10 @@ const MessageInput = () => {
     }
   };
 
+  const addEmoji = (emoji) => {
+    setText((prevContent) => prevContent + emoji);
+  };
+
   return (
     <div className="message-input-container">
       {imagePreview && (
@@ -73,6 +79,29 @@ const MessageInput = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+          <div className="emoji-picker-container">
+            <button
+              type="button"
+              className="emoji-picker-button"
+              onClick={() => setEmojiPickerVisible(!emojiPickerVisible)}
+            >
+              😊
+            </button>
+            {emojiPickerVisible && (
+              <div className="emoji-picker">
+                {emojis.map((emoji, index) => (
+                  <button
+                    key={index}
+                    className="emoji-button"
+                    type="button"
+                    onClick={() => addEmoji(emoji)}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <input
             type="file"
             accept="image/*"

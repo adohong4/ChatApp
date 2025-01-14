@@ -83,7 +83,7 @@
   border-bottom: 1px solid #e5e7eb;
   width: 100%;
   padding: 1.25rem;
-  background-color: #FFBF00;
+  background-color: orange;
 }
 
 .sidebar-header-content {
@@ -108,7 +108,8 @@
 }
 
 .sidebar-online-filter .checkbox {
-  border: 2px solid #fff !important;
+  border: 3px solid #fff !important;
+  border-radius: 50%;
 }
 
 .sidebar-filter-toggle {
@@ -119,8 +120,11 @@
 }
 
 .sidebar-filter-text {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #fff;
+  display: flex;
+  gap: 25px;
+  align-items: center;
 }
 
 .sidebar-online-count {
@@ -209,6 +213,17 @@
   flex-direction: column;
   height: 90vh;
   width: 100vw;
+}
+
+
+.chat-messages .chat-begin{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center; 
+  font-size: 16px; 
+  color: #555;
 }
 
 .chat-messages {
@@ -346,9 +361,10 @@
 }
 
 .chat-user-name {
-  font-weight: 500;
+  font-weight: 600;
   margin: 0;
   font-size: 1rem;
+  color: #000;
 }
 
 .chat-user-status {
@@ -637,7 +653,7 @@
   width: 87%;
   height: 50px;
   resize: none;
-  padding:5px 10px;
+  padding: 5px 10px;
   font-size: 16px;
   border-radius: 50px !important;
   border: 1px solid #ccc;
@@ -711,7 +727,7 @@
 
 .upload-button,
 .post-submit-button,
-.emoji-picker-button{
+.emoji-picker-button {
   cursor: pointer;
   background: none;
   border: none;
@@ -755,15 +771,18 @@
   gap: 10px;
   margin-bottom: 10px;
 }
-.profile-pic-1{
+
+.profile-pic-1 {
   width: 50px;
 }
+
 .profile-pic-1 img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   border: 2px solid #FFBF00;
 }
+
 .profile-pic img {
   width: 50px;
   height: 50px;
@@ -778,11 +797,13 @@
 .user-info p.time {
   font-size: 13px;
 }
+
 .last-input label svg,
-.last-input button svg{
+.last-input button svg {
   padding: 2px;
   margin-right: 2px;
 }
+
 .post-content img {
   max-width: 100%;
   border-radius: 8px;
@@ -812,26 +833,28 @@
 
 .post-actions button {
   display: flex;
-  align-items: center; 
-  gap: 5px; 
-  padding: 4px 12px; 
-  background-color: transparent; 
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background-color: transparent;
   border: none;
   cursor: pointer;
   font-size: 14px;
-  color: #4b5563; 
+  color: #4b5563;
 }
 
 .post-actions button:hover {
-  background-color: #f3f4f6; 
+  background-color: #f3f4f6;
   border-radius: 5px;
-  cursor: pointer; 
+  cursor: pointer;
 }
-.last-input{
+
+.last-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .share-button,
 .comment-button {
   display: flex;

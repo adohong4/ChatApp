@@ -78,9 +78,18 @@ public class UserController {
 
 
     @PostMapping("/api/messages/users")
-    List<User> getUser(){
-        return userService.getUser();
+    public ResponseEntity<List<User>> getUser(HttpServletRequest request){
+        User userId = (User) request.getAttribute("user");
+
+        if(userId==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        List<User> users = userService.getUser(userId.get_id());
+
+        return ResponseEntity.ok(users);
     }
+
 
     @PostMapping("/api/auth/update-profile")
     public ResponseEntity<?> updateProfilePic(@RequestParam("profilePic") MultipartFile file, HttpServletRequest request) {

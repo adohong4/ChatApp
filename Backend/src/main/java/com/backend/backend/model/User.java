@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "user")
@@ -29,6 +30,15 @@ public class User {
 
     private String profilePic;
     private List<ObjectId> myReaction;
+    private Date createAt;
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
 
     public User() {
         this.myReaction = new ArrayList<>(); // Khởi tạo danh sách

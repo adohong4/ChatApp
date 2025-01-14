@@ -5,11 +5,11 @@ import { useNewsStore } from "../store/useNewsStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatTime } from "../lib/utils";
 import toast from "react-hot-toast";
+import {emojis} from "../constants/index"
 
 const PostCreatorWithIcons = () => {
   const [image, setImage] = useState(null);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
-  const emojis = ["😀", "😂", "😍", "🔥", "👍", "💡", "🎉", "🌟", "❤️", "😊"];
   const { newsfeed, isNewsfeedLoading, getAllNewsfeed, toggleReaction } = useNewsStore();
   const { authUser } = useAuthStore();
   const createNewsfeed = useNewsStore((state) => state.createNewsfeed);
@@ -67,7 +67,7 @@ const PostCreatorWithIcons = () => {
         <div className="post-input-container">
           <div className="post">
             <div className="profile-pic-1">
-              <img src={authUser.profilePic} alt="User" className="rounded-full" />
+              <img src={authUser.profilePic || "/avatar.png"} alt="User" className="rounded-full" />
             </div>
 
             <textarea
@@ -134,8 +134,8 @@ const PostCreatorWithIcons = () => {
       </form>
       {/* News Post */}
       <div className="post-list" >
-        {newsfeed.map((post) => (
-          <div key={post.id} className="post-item">
+        {newsfeed.map((post, index) => (
+          <div key={index} className="post-item">
             <div className="post-header">
               <div className="profile-pic">
                 <img

@@ -126,17 +126,17 @@ public class NewsService {
         int reactionIndex = reactions.indexOf(new ObjectId(user.get_id()));
         int myReactionIndex = myReactions.indexOf(new ObjectId(newsFeedId));
 
-        System.out.println("reactionIndex: " + reactionIndex);
-        System.out.println("myReactionIndex: " + myReactionIndex);
+//        System.out.println("reactionIndex: " + reactionIndex);
+//        System.out.println("myReactionIndex: " + myReactionIndex);
 
         if (reactionIndex >= 0 && myReactionIndex >= 0) {
             reactions.remove(reactionIndex);
             myReactions.remove(myReactionIndex);
-            System.out.println("Removed reaction");
+//            System.out.println("Removed reaction");
         } else {
             reactions.add(new ObjectId(user.get_id()));
             myReactions.add(new ObjectId(newsFeedId));
-            System.out.println("Added reaction");
+//            System.out.println("Added reaction");
         }
 
         newsFeed.setReaction(reactions);
