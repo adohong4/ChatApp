@@ -5,11 +5,11 @@ import { useNewsStore } from "../store/useNewsStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatTime } from "../lib/utils";
 import toast from "react-hot-toast";
+import {emojis} from "../constants/index"
 
 const PostCreatorWithIcons = () => {
   const [image, setImage] = useState(null);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
-  const emojis = ["😀", "😂", "😍", "🔥", "👍", "💡", "🎉", "🌟", "❤️", "😊"];
   const { newsfeed, isNewsfeedLoading, getAllNewsfeed, toggleReaction } = useNewsStore();
   const { authUser } = useAuthStore();
   const createNewsfeed = useNewsStore((state) => state.createNewsfeed);

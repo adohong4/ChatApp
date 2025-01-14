@@ -50,7 +50,7 @@ const ChatContainer = () => {
         {messages.length === 0 ? (
           <p className="chat-begin">Hãy nhắn tin để cùng nhau bắt đầu cuộc trò chuyện thú vị nha.</p>
         ) : (
-          <div className="chat">
+          <div className="chat-1">
             {messages.map((message, index) => (
               <div
                 key={index}
