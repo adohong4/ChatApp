@@ -7,4 +7,7 @@ export default defineConfig({
   define: {
     global: 'window', // Định nghĩa global là window
   },
+  // server: {
+  //   port: 5020
+  // }
 })
